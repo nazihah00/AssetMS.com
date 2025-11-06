@@ -28,6 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'branch',
         'email',
         'password',
+        'is_delete',
     ];
 
     /**
