@@ -8,15 +8,21 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 
 
 class UserController extends Controller
 {
     public function list()
     {
-        $getRecord = User::with(['role'])
-                    ->where ('is_delete',0)
-                    ->paginate(10);
+        $query = User::with(['role']);
+        
+        // Check if is_delete column exists before using it
+        if (Schema::hasColumn('users', 'is_delete')) {
+            $query->where('is_delete', 0);
+        }
+        
+        $getRecord = $query->paginate(10);
         return view('auth.userlist', compact('getRecord'));
     }
 
@@ -63,8 +69,15 @@ class UserController extends Controller
     public function delete($id):RedirectResponse
     {
         $user = User::findOrFail($id);
-        $user->is_delete = 1; 
-        $user->save();
+        
+        // Check if is_delete column exists before using it
+        if (Schema::hasColumn('users', 'is_delete')) {
+            $user->is_delete = 1; 
+            $user->save();
+        } else {
+            // If column doesn't exist, actually delete the record
+            $user->delete();
+        }
         
         return redirect() -> route('auth.userlist') ->with('success','User deleted sucessfully');
     }

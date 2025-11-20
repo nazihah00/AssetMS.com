@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Schema;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -61,8 +62,14 @@ class User extends Authenticatable implements MustVerifyEmail
         
     public static function getUser()
     {
-        return self::where('is_delete', 0)
-                ->orderBy('id', 'desc')
+        $query = self::query();
+        
+        // Check if is_delete column exists before using it
+        if (Schema::hasColumn('users', 'is_delete')) {
+            $query->where('is_delete', 0);
+        }
+        
+        return $query->orderBy('id', 'desc')
                 ->paginate(10); // 10 rekod per page
     }
 

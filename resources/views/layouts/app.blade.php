@@ -77,6 +77,32 @@
     </script> -->
 
     <script src="{{ url('assets/js/main.js') }}"></script>
+    
+    <!-- Prevent back button access after logout -->
+    <script>
+        // Prevent browser back/forward cache (bfcache)
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                // Page was loaded from cache, reload it to ensure fresh authentication check
+                window.location.reload();
+            }
+        });
+        
+        // Prevent back button navigation to protected pages
+        if (window.history && window.history.pushState) {
+            // Add current page to history stack
+            window.history.pushState(null, null, window.location.href);
+            
+            window.addEventListener('popstate', function(event) {
+                // When back button is pressed, push current state again to prevent navigation
+                window.history.pushState(null, null, window.location.href);
+                
+                // Force a fresh page load to check authentication
+                window.location.reload();
+            });
+        }
+    </script>
+    
     @stack('scripts')
 </body>
 

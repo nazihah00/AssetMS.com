@@ -14,7 +14,16 @@ class AuthController extends Controller
 {
     public function showLogin()
     {
-        return view('auth.login');
+        // If user is already authenticated, redirect to dashboard
+        if (Auth::check()) {
+            return redirect('/dashboard');
+        }
+        
+        return response()
+            ->view('auth.login')
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 
     public function login(Request $request)
@@ -101,6 +110,10 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         Log::info('LOG OUT');
-        return redirect('/auth/login');
+        
+        return redirect('/auth/login')
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 }

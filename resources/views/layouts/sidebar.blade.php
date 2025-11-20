@@ -73,7 +73,7 @@
                             </ul> 
                         </li>
                         <li class="sidebar-item {{ request()->is('/login') ? 'active' : '' }}">
-                            <a href="{{ url('auth/login') }}" class='sidebar-link'>
+                            <a href="{{ route('logout') }}" class='sidebar-link'>
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span>Logout</span>
                             </a>
